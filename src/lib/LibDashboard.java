@@ -554,13 +554,34 @@ public class LibDashboard extends JFrame {
 				    }
 				});
 
-				// 2. Butona tıklandığında hangi sekmedeysek o tabloyu metoda gönder
+				// ... önceki buton kodları ...
+
 				btnExportCSV.addActionListener(e -> {
-				    int selectedIndex = adminTabs.getSelectedIndex();
-				    if (selectedIndex == 0) {
-				        exportTableToCSV(table_books, "Kitap_Envanteri");
-				    } else if (selectedIndex == 1) {
-				        exportTableToCSV(table_rooms, "Oda_Envanteri");
+				    // 1. Kullanıcıdan dosyayı kaydedeceği konumu al (Bu işlem UI'a aittir, burada kalmalı)
+				    JFileChooser fileChooser = new JFileChooser();
+				    fileChooser.setDialogTitle("Raporu Kaydet");
+				    
+				    int userSelection = fileChooser.showSaveDialog(this);
+				    if (userSelection == JFileChooser.APPROVE_OPTION) {
+				        String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+				        if (!filePath.toLowerCase().endsWith(".csv")) {
+				            filePath += ".csv";
+				        }
+				        
+				        try {
+				            // 2. Hangi sekmedeysek o tabloyu seç
+				            int selectedIndex = adminTabs.getSelectedIndex();
+				            JTable tableToExport = (selectedIndex == 0) ? table_books : table_rooms;
+				            
+				            // 3. İŞİ UZMANA DEVRET! (Ayrı sınıftaki metodumuzu çağırıyoruz)
+				            AdminReportManager.exportTableToCSV(tableToExport, filePath);
+				            
+				            // Başarı mesajını göster
+				            javax.swing.JOptionPane.showMessageDialog(this, "Rapor başarıyla oluşturuldu:\n" + filePath);
+				            
+				        } catch (Exception ex) {
+				            javax.swing.JOptionPane.showMessageDialog(this, "Hata: " + ex.getMessage(), "Kayıt Hatası", javax.swing.JOptionPane.ERROR_MESSAGE);
+				        }
 				    }
 				});
 		
@@ -674,52 +695,5 @@ public class LibDashboard extends JFrame {
 	    }
 	});
 }
-	// --- EVRENSEL CSV DIŞA AKTARMA MOTORU ---
-		// Bu metot, kendisine gönderilen herhangi bir JTable'ı güvenli bir şekilde CSV'ye dönüştürür.
-		private void exportTableToCSV(JTable targetTable, String defaultFileName) {
-		    JFileChooser fileChooser = new JFileChooser();
-		    fileChooser.setDialogTitle("Raporu Kaydet");
-		    fileChooser.setSelectedFile(new File(defaultFileName + ".csv")); // Varsayılan dosya adı önerisi
-		    
-		    int userSelection = fileChooser.showSaveDialog(this);
-		    if (userSelection == JFileChooser.APPROVE_OPTION) {
-		        File fileToSave = fileChooser.getSelectedFile();
-		        String filePath = fileToSave.getAbsolutePath();
-		        if (!filePath.toLowerCase().endsWith(".csv")) filePath += ".csv";
-		        
-		        try (FileOutputStream fos = new FileOutputStream(filePath);
-		             OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
-		            
-		            // UTF-8 BOM - Excel'in Türkçe karakterleri sorunsuz açması için zorunlu imza
-		            fos.write(0xef);
-		            fos.write(0xbb);
-		            fos.write(0xbf);
-		            
-		            DefaultTableModel model = (DefaultTableModel) targetTable.getModel();
-		            
-		            // Başlıkları Yaz
-		            for (int i = 0; i < model.getColumnCount(); i++) {
-		                osw.write("\"" + model.getColumnName(i) + "\"");
-		                if (i < model.getColumnCount() - 1) osw.write(";"); // Ayırıcı olarak Noktalı Virgül
-		            }
-		            osw.write("\n");
-		            
-		            // Verileri Yaz (Hücre kaymasını engelleyen Tırnak mantığıyla)
-		            for (int i = 0; i < model.getRowCount(); i++) {
-		                for (int j = 0; j < model.getColumnCount(); j++) {
-		                    Object value = model.getValueAt(i, j);
-		                    String data = (value != null) ? value.toString() : "";
-		                    osw.write("\"" + data.replace("\"", "\"\"") + "\"");
-		                    if (j < model.getColumnCount() - 1) osw.write(";");
-		                }
-		                osw.write("\n");
-		            }
-		            
-		            javax.swing.JOptionPane.showMessageDialog(this, "Rapor (UTF-8) başarıyla oluşturuldu.");
-		            
-		        } catch (Exception ex) {
-		            javax.swing.JOptionPane.showMessageDialog(this, "Hata: " + ex.getMessage(), "Kayıt Hatası", javax.swing.JOptionPane.ERROR_MESSAGE);
-		        }
-		    }
-		}
+
 }
