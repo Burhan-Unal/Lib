@@ -38,14 +38,14 @@ public class DatabaseManager {
                 + " isim TEXT NOT NULL,\n"
                 + " yazar TEXT,\n"       
                 + " kategori TEXT,\n"    
-                + " durum TEXT DEFAULT 'Available'\n" 
+                + " durum TEXT DEFAULT 'Müsait'\n" 
                 + ");";
 
         String rezervasyonSql = "CREATE TABLE IF NOT EXISTS Rezervasyon (" +
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 " kullanici_id INTEGER," +
                 " materyal_id INTEGER," +
-                " rezervasyon_zamani DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                " rezervasyon_zamani DATETIME DEFAULT (datetime('now', 'localtime'))," +
                 " FOREIGN KEY (kullanici_id) REFERENCES Kullanici (id)," +
                 " FOREIGN KEY (materyal_id) REFERENCES Materyal (id)" +
                 ");";
@@ -54,7 +54,7 @@ public class DatabaseManager {
                 " id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 " kullanici_id INTEGER," +
                 " materyal_id INTEGER," +
-                " eklenme_zamani DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                " eklenme_zamani DATETIME DEFAULT (datetime('now', 'localtime'))," +
                 " FOREIGN KEY (kullanici_id) REFERENCES Kullanici (id)," +
                 " FOREIGN KEY (materyal_id) REFERENCES Materyal (id)" +
                 ");";
