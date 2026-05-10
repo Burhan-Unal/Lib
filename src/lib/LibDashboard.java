@@ -12,13 +12,13 @@ public class LibDashboard extends JFrame implements ReservationObserver {
     private JPanel DashboardCard;
     
     private RoomsPanel roomsPanel; 
+    private ProfilePanel profilePanel; // YENİ: Profile paneline dışarıdan erişmek için eklendi
     private TimeManager timeManager; 
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                
                 UIManager.put("AuditoryCues.playList", UIManager.get("AuditoryCues.noAuditoryCues"));
                 
                 LoginFrame login = new LoginFrame();
@@ -34,7 +34,6 @@ public class LibDashboard extends JFrame implements ReservationObserver {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1297, 787);
         
-        
         this.timeManager = new TimeManager(this);
 
         JPanel contentPane = new JPanel();
@@ -42,7 +41,6 @@ public class LibDashboard extends JFrame implements ReservationObserver {
         contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
         
-       
         JPanel sideMenu = new JPanel(new GridLayout(isAdmin ? 5 : 4, 0, 0, 0));
         contentPane.add(sideMenu, BorderLayout.WEST);
         
@@ -62,31 +60,27 @@ public class LibDashboard extends JFrame implements ReservationObserver {
         sideMenu.add(btnGecmis);
         sideMenu.add(btnProfil);
 
-        
         DashboardCard = new JPanel(new CardLayout());
         contentPane.add(DashboardCard, BorderLayout.CENTER);
         
-        
         BooksPanel booksPanel = new BooksPanel(isAdmin);
-        this.roomsPanel = new RoomsPanel(isAdmin); // DEĞİŞİKLİK: Global değişkene atandı
+        this.roomsPanel = new RoomsPanel(isAdmin); 
         ReadlistPanel readlistPanel = new ReadlistPanel();
-        ProfilePanel profilePanel = new ProfilePanel(isAdmin, this); 
-
         
+        // DÜZELTME: profilePanel'i global değişkene bağladık
+        this.profilePanel = new ProfilePanel(isAdmin, this); 
+
         DashboardCard.add(booksPanel, "KITAPLAR");
         DashboardCard.add(roomsPanel, "ODALAR");
         DashboardCard.add(readlistPanel, "GECMIS");
         DashboardCard.add(profilePanel, "PROFIL");
 
         if (isAdmin) {
-            
             AdminPanel adminPanel = new AdminPanel(booksPanel.getBooksTable(), roomsPanel.getRoomsTable());
             DashboardCard.add(adminPanel, "ADMIN");
         }
 
-        
         timeManager.startScheduler(roomsPanel.getRoomsTable());
-
 
         if (isAdmin && btnAdmin != null) {
             btnAdmin.addActionListener(e -> UIHelper.switchPanel(DashboardCard, "ADMIN"));
@@ -98,7 +92,6 @@ public class LibDashboard extends JFrame implements ReservationObserver {
         btnProfil.addActionListener(e -> UIHelper.switchPanel(DashboardCard, "PROFIL"));
     }
 
-    
     @Override
     public void onReservationTimeout(String roomName, int rowIndex) {
         SwingUtilities.invokeLater(() -> {
@@ -106,10 +99,13 @@ public class LibDashboard extends JFrame implements ReservationObserver {
                                 "Rezervasyon otomatik olarak iptal edildi ve güven puanınız düşürüldü.";
             JOptionPane.showMessageDialog(this, alertMessage, "Sistem Uyarısı: Kural İhlali", JOptionPane.WARNING_MESSAGE);
             
-            // Tablodaki veriyi anlık olarak "Müsait" durumuna çek
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) roomsPanel.getRoomsTable().getModel();
-            model.setValueAt("Müsait", rowIndex, 2);
-            model.setValueAt("-", rowIndex, 3);
+            model.setValueAt("Müsait", rowIndex, 3);
+            
+            // YENİ: Pop-up çıktığı an arka planda güven puanını canlı canlı düşürür!
+            if (profilePanel != null) {
+                profilePanel.puanGuncelle();
+            }
         });
     }
 }

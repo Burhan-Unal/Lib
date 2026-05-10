@@ -67,7 +67,7 @@ public class ProfilePanel extends JPanel {
         });
     }
     
-    private void puanGuncelle() {
+    public void puanGuncelle() {
         int puan = DatabaseManager.guvenPuaniGetir(DatabaseManager.aktifKullaniciId);
         trustProgressBar.setValue(puan);
         trustProgressBar.setString(puan + " / 100");
