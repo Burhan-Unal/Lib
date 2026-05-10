@@ -153,7 +153,7 @@ public class AdminPanel extends JPanel {
                     DefaultTableModel model = (DefaultTableModel) roomsTable.getModel();
                     model.setRowCount(0); 
                     for (String[] dbSatir : DatabaseManager.tumMateryalleriGetir("Oda")) {
-                        model.addRow(new Object[]{ dbSatir[0], dbSatir[1], dbSatir[3], dbSatir[4], "-" });
+                        model.addRow(new Object[]{ dbSatir[0], dbSatir[1], dbSatir[3], dbSatir[4]});
                     }
                 }
             }

@@ -40,7 +40,7 @@ public class RoomsPanel extends JPanel {
         add(roomButtons, BorderLayout.SOUTH);
 
         // Tablo Kurulumu
-        String[] roomColumns = {"ID", "Oda İsmi/No", "Kapasite", "Durum", "Kalan Süre"};
+        String[] roomColumns = {"ID", "Oda İsmi/No", "Kapasite", "Durum"};
         table_rooms = UIHelper.createReadOnlyTable(roomColumns);
         
         // Tabloyu ekranda göster
@@ -57,9 +57,7 @@ public class RoomsPanel extends JPanel {
         
         for (String[] oda : odalar) {
             String kapasite = (oda[3] != null && oda[3].endsWith("Kişi")) ? oda[3] : oda[3] + " Kişi";
-            
-            // 5. sütun olan "Kalan Süre" için "-" eklendi
-            model.addRow(new Object[]{oda[0], oda[1], kapasite, oda[4], "-"});
+            model.addRow(new Object[]{oda[0], oda[1], kapasite, oda[4]});
         }
     }
 
