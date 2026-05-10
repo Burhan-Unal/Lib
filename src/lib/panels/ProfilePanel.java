@@ -41,10 +41,8 @@ public class ProfilePanel extends JPanel {
 
         // Butonlar
         JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 0));
-        JButton btnChangePassword = UIHelper.createButton("Şifre Değiştir");
         JButton btnLogout = UIHelper.createColoredButton("Çıkış Yap", null, Color.RED, UIHelper.FONT_NORMAL);
         
-        panelButtons.add(btnChangePassword);
         panelButtons.add(btnLogout);
         add(panelButtons);
 
@@ -54,7 +52,5 @@ public class ProfilePanel extends JPanel {
             new LoginFrame().setVisible(true);
             parentFrame.dispose(); // Ana Dashboard'u kapatır
         });
-
-        btnChangePassword.addActionListener(e -> JOptionPane.showMessageDialog(this, "Veritabanı bağlantısı bekleniyor."));
     }
 }
