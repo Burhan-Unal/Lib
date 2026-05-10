@@ -76,7 +76,7 @@ public class BooksPanel extends JPanel {
         }
     }
 
-    // Arama mantığı ve Placeholder buraya taşındı
+    // Arama mantığı 
     private void setupSearchLogic() {
         textField.setForeground(Color.GRAY);
         textField.setText("Kitap adı veya ID giriniz...");

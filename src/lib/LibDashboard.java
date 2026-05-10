@@ -57,7 +57,7 @@ public class LibDashboard extends JFrame {
         sideMenu.add(btnGecmis);
         sideMenu.add(btnProfil);
 
-        // --- MERKEZ KART (PANEL) YÖNETİCİSİ ---
+        //Panellerin Yönetimi
         DashboardCard = new JPanel(new CardLayout());
         contentPane.add(DashboardCard, BorderLayout.CENTER);
         
@@ -79,7 +79,7 @@ public class LibDashboard extends JFrame {
             DashboardCard.add(adminPanel, "ADMIN");
         }
 
-        // --- BUTON TIKLAMA OLAYLARI (ROUTING) ---
+        //Panel değişme mantığı
         
         if (isAdmin && btnAdmin != null) {
             btnAdmin.addActionListener(e -> UIHelper.switchPanel(DashboardCard, "ADMIN"));

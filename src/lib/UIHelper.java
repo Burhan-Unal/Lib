@@ -16,7 +16,7 @@ public class UIHelper {
 	//Renk+Font
     public static final Color COLOR_PRIMARY = new Color(67, 97, 238);   // Modern bir mavi
     public static final Color COLOR_DANGER = new Color(239, 35, 60);    // Soft kırmızı (Ban/Silme için)
-    public static final Color COLOR_WARNING = new Color(255, 159, 28);  // Soft turuncu (Suspend için)
+    public static final Color COLOR_WARNING = new Color(255, 159, 28);  // Soft turuncu (Ceza için)
     public static final Color COLOR_SUCCESS = new Color(45, 198, 83);   // Soft yeşil (CSV İndirme/Onay için)
     public static final Color COLOR_TEXT = new Color(43, 45, 66);       // Tam siyah yerine koyu lacivert-gri
     public static final Color COLOR_BACKGROUND = new Color(248, 249, 250); // Kırık beyaz / Açık gri
@@ -49,7 +49,7 @@ public class UIHelper {
         
         if (bgColor != null) {
             btn.setBackground(bgColor);
-            btn.setForeground(Color.WHITE); // Arka plan renkliyse yazı genelde beyaz şık durur
+            btn.setForeground(Color.WHITE); // Arka plan renkliyse yazı beyaz
         }
         if (fgColor != null) {
             btn.setForeground(fgColor); // Özel yazı rengi istendiyse ez (Override)
@@ -61,7 +61,7 @@ public class UIHelper {
     public static JLabel createLabel(String text, Font font, int alignment) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(font);
-        lbl.setForeground(COLOR_TEXT); // Siyah yerine modern koyu gri
+        lbl.setForeground(COLOR_TEXT); //Modern koyu gri
         lbl.setHorizontalAlignment(alignment);
         return lbl;
     }
@@ -77,7 +77,7 @@ public class UIHelper {
         
         JTable table = new JTable(model);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 15)); // Tablo içi font
-        table.setRowHeight(35); // Satır yüksekliği biraz küçültüldü ama hala ferah
+        table.setRowHeight(35); 
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 15));
         table.getTableHeader().setBackground(new Color(233, 236, 239)); // Tablo başlığına hafif gri arkaplan
         table.getTableHeader().setBorder(new EmptyBorder(0,0,0,0)); // Başlık çerçevesini sil

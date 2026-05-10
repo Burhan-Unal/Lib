@@ -39,19 +39,18 @@ public class AdminPanel extends JPanel {
         adminReportPanel.add(btnExportCSV);
         add(adminReportPanel, BorderLayout.SOUTH);
 
-        // --- ÇAĞRILAR BURADA ---
+        //Tab çağrıları
         createBookManagementTab();
         createRoomManagementTab();
         createUserManagementTab();
         setupTabChangeListener();
     }
 
- // 1. KİTAP YÖNETİMİ METODU
+ //Kitap Yönetimi
     private void createBookManagementTab() {
         JPanel tabBookMgmt = new JPanel(new BorderLayout());
         tabBookMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
         
-        // Boşlukları 15'e düşürüp, EmptyBorder'ı Oda Yönetimi ile aynı ferahlığa getirdik
         JPanel formPanel = new JPanel(new GridLayout(5, 2, 15, 15));
         formPanel.setBorder(new EmptyBorder(30, 100, 30, 100));
         formPanel.setBackground(UIHelper.COLOR_BACKGROUND);
@@ -69,12 +68,11 @@ public class AdminPanel extends JPanel {
         formPanel.add(UIHelper.createLabel("Kategori:", UIHelper.FONT_NORMAL, SwingConstants.LEFT));       formPanel.add(txtAddCategory);
         formPanel.add(new JLabel(""));                                                                     formPanel.add(btnAddBook);
         
-        // CENTER yerine NORTH'a ekledik ki kendi doğal boyutunda kalsın, sıkışmasın
         tabBookMgmt.add(formPanel, BorderLayout.NORTH);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(UIHelper.COLOR_BACKGROUND);
-        bottomPanel.setBorder(new EmptyBorder(0, 0, 20, 0)); // Silme butonunun altına biraz boşluk ekledik
+        bottomPanel.setBorder(new EmptyBorder(0, 0, 20, 0)); 
         
         JButton btnDeleteBook = UIHelper.createColoredButton("Tablodan Seçili Kitabı SİL", UIHelper.COLOR_DANGER, Color.WHITE, UIHelper.FONT_BOLD);
         makeButtonFlat(btnDeleteBook);
@@ -107,7 +105,7 @@ public class AdminPanel extends JPanel {
         });
     }
 
-    // 2. ODA YÖNETİMİ METODU
+    // Oda Yönetimi
     private void createRoomManagementTab() {
         JPanel tabRoomMgmt = new JPanel(new BorderLayout());
         tabRoomMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
@@ -151,7 +149,7 @@ public class AdminPanel extends JPanel {
         });
     }
 
-    // 3. KULLANICI YÖNETİMİ METODU
+    //Kullanıcı Yönetimi
     private void createUserManagementTab() {
         JPanel tabUserMgmt = new JPanel(new BorderLayout());
         tabUserMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
@@ -179,7 +177,7 @@ public class AdminPanel extends JPanel {
         btnPunish.addActionListener(e -> JOptionPane.showMessageDialog(this, txtTargetUserId.getText() + " ID'li kullanıcının puanı düşürüldü."));
     }
 
-    // 4. TAB CHANGE LISTENER METODU
+    //Tab değiştirme
     private void setupTabChangeListener() {
         adminTabs.addChangeListener(e -> {
             int selectedIndex = adminTabs.getSelectedIndex();
@@ -195,10 +193,8 @@ public class AdminPanel extends JPanel {
             }
         });
     }
-
-    // --- YARDIMCI METOTLAR (TASARIM ÇAKIŞMASINI ÇÖZENLER) ---
     
-    // Metin kutularının (JTextField) düzgün ve modern görünmesi için
+    // Metin kutularının düzgün ve modern görünmesi için
     private JTextField createTextField() {
         JTextField tf = new JTextField();
         tf.setFont(UIHelper.FONT_NORMAL);
@@ -207,9 +203,8 @@ public class AdminPanel extends JPanel {
         return tf;
     }
 
-    // Native buton sorununu çözen sihirli metod
     private void makeButtonFlat(JButton btn) {
-        btn.setOpaque(true); // İçini bizim verdiğimiz renkle tam doldur
+        btn.setOpaque(true); // İçini verilen renkle tam doldur
         btn.setBorderPainted(false); // İşletim sisteminin native kenarlığını çizme
     }
 }
