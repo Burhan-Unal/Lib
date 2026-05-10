@@ -34,6 +34,7 @@ public class LoginFrame extends JFrame {
     }
 
     public static void main(String[] args) {
+    	DatabaseManager.initializeDatabase();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {

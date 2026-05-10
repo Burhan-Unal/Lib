@@ -268,31 +268,39 @@ public class DatabaseManager {
         }
         return liste;
     }
-    
 
-    public static boolean materyalEkle(String tip, String isim) {
-        String sql = "INSERT INTO Materyal (tip, isim) VALUES (?, ?)";
-        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+    public static boolean materyalEkle(String tip, String isim, String yazar, String kategori) {
+        String sql = "INSERT INTO Materyal (tip, isim, yazar, kategori, durum) VALUES (?, ?, ?, ?, 'Müsait')";
+        try (java.sql.Connection conn = java.sql.DriverManager.getConnection(URL);
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setString(1, tip);
             pstmt.setString(2, isim);
+            pstmt.setString(3, yazar);
+            pstmt.setString(4, kategori);
+            
             pstmt.executeUpdate();
             return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Materyal Ekleme Hatası: " + e.getMessage());
+            return false;
         }
-        return false;
     }
-
+    
     public static boolean materyalSil(int materyalId) {
         String sql = "DELETE FROM Materyal WHERE id = ?";
         try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setInt(1, materyalId);
-            int result = pstmt.executeUpdate();
-            return result > 0;
+            int silinenSatir = pstmt.executeUpdate();
+            
+            return silinenSatir > 0; 
+            
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Materyal silme hatası: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
     public static int guvenPuaniGetir(int kullaniciId) {

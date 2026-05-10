@@ -46,7 +46,7 @@ public class AdminPanel extends JPanel {
         setupTabChangeListener();
     }
 
- //Kitap Yönetimi
+    //Kitap Yönetimi
     private void createBookManagementTab() {
         JPanel tabBookMgmt = new JPanel(new BorderLayout());
         tabBookMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
@@ -82,10 +82,10 @@ public class AdminPanel extends JPanel {
         adminTabs.addTab("Kitap Yönetimi", tabBookMgmt);
 
         btnAddBook.addActionListener(e -> {
-            if (txtAddName.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Lütfen kitap adını doldurun!");
+            if (txtAddName.getText().isEmpty() || txtAddAuthor.getText().isEmpty() || txtAddCategory.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Lütfen tüm alanları doldurun!");
             } else {
-                if (DatabaseManager.materyalEkle("Kitap", txtAddName.getText())) {
+                if (DatabaseManager.materyalEkle("Kitap", txtAddName.getText(), txtAddAuthor.getText(), txtAddCategory.getText())) {
                     JOptionPane.showMessageDialog(this, "Kitap eklendi!");
                     txtAddName.setText(""); txtAddAuthor.setText(""); txtAddCategory.setText("");
                 }
@@ -128,11 +128,15 @@ public class AdminPanel extends JPanel {
 
         tabRoomMgmt.add(roomForm, BorderLayout.NORTH);
         adminTabs.addTab("Oda Yönetimi", tabRoomMgmt);
-
+        
         btnAddRoom.addActionListener(e -> {
-            if (DatabaseManager.materyalEkle("Oda", txtRoomName.getText())) {
-                JOptionPane.showMessageDialog(this, "Oda eklendi.");
-                txtRoomName.setText(""); txtCapacity.setText("");
+            if (txtRoomName.getText().isEmpty() || txtCapacity.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Lütfen tüm alanları doldurun!");
+            } else {
+                if (DatabaseManager.materyalEkle("Oda", txtRoomName.getText(), "-", txtCapacity.getText())) {
+                    JOptionPane.showMessageDialog(this, "Oda eklendi.");
+                    txtRoomName.setText(""); txtCapacity.setText("");
+                }
             }
         });
         
