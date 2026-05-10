@@ -2,6 +2,7 @@ package lib.panels;
 
 import lib.LoginFrame;
 import lib.UIHelper;
+import lib.DatabaseManager;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,12 +19,14 @@ public class ProfilePanel extends JPanel {
 
         if (!isAdmin) {
             // Güven Puanı
+            int puan = DatabaseManager.guvenPuaniGetir(DatabaseManager.aktifKullaniciId);
+            
             JPanel panelTrustScore = new JPanel(new BorderLayout(0, 10));
             panelTrustScore.add(UIHelper.createLabel("Dinamik Güven Puanınız:", UIHelper.FONT_NORMAL, SwingConstants.CENTER), BorderLayout.NORTH);
             JProgressBar trustProgressBar = new JProgressBar(0, 100);
-            trustProgressBar.setValue(85);
+            trustProgressBar.setValue(puan);
             trustProgressBar.setStringPainted(true);
-            trustProgressBar.setString("85 / 100");
+            trustProgressBar.setString(puan + " / 100");
             trustProgressBar.setFont(UIHelper.FONT_BOLD);
             trustProgressBar.setForeground(new Color(50, 205, 50));
             panelTrustScore.add(trustProgressBar, BorderLayout.CENTER);
@@ -31,8 +34,8 @@ public class ProfilePanel extends JPanel {
 
             // Aktif İşlemler
             JPanel panelActiveInfo = new JPanel(new GridLayout(2, 1, 10, 10));
-            panelActiveInfo.add(UIHelper.createLabel("Kitap Durumu: Data Structures (İadeye 5 Gün Kaldı)", UIHelper.FONT_NORMAL, SwingConstants.CENTER));
-            panelActiveInfo.add(UIHelper.createLabel("Oda Rezervasyonu: Yok", UIHelper.FONT_NORMAL, SwingConstants.CENTER));
+            panelActiveInfo.add(UIHelper.createLabel("Kitap Durumu: Aktif ödünç kaydı kontrol ediliyor...", UIHelper.FONT_NORMAL, SwingConstants.CENTER));
+            panelActiveInfo.add(UIHelper.createLabel("Oda Rezervasyonu: Bilgi için geçmişe bakınız", UIHelper.FONT_NORMAL, SwingConstants.CENTER));
             add(panelActiveInfo);
         }
 
@@ -47,6 +50,7 @@ public class ProfilePanel extends JPanel {
 
         // Olaylar
         btnLogout.addActionListener(e -> {
+            DatabaseManager.aktifKullaniciId = -1; // Oturumu kapatırken ID'yi sıfırla
             new LoginFrame().setVisible(true);
             parentFrame.dispose(); // Ana Dashboard'u kapatır
         });

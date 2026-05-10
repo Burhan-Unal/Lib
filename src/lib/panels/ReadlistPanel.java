@@ -1,7 +1,9 @@
 package lib.panels;
 
 import lib.UIHelper;
+import lib.DatabaseManager;
 import java.awt.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -18,16 +20,24 @@ public class ReadlistPanel extends JPanel {
         topPanel.add(UIHelper.createLabel("Geçmiş İşlemleriniz", UIHelper.FONT_NORMAL, SwingConstants.LEFT));
         add(topPanel, BorderLayout.NORTH);
 
-        // Tablo Kurulumu
-        String[] readlistColumns = {"İşlem ID", "Kitap Adı", "Alış Tarihi", "İade Tarihi", "Durum"};
+        // Tablo Kurulumu - DB'den gelen verilere göre sütunları güncelledim
+        String[] readlistColumns = {"Materyal İsmi", "Tip", "Durum", "İşlem Zamanı"};
         table_readlist = UIHelper.createReadOnlyTable(readlistColumns);
-        DefaultTableModel model = (DefaultTableModel) table_readlist.getModel();
-
-        // Örnek Veriler
-        model.addRow(new Object[]{"TRX-101", "Clean Code", "01.04.2026", "15.04.2026", "İade Edildi"});
-        model.addRow(new Object[]{"TRX-102", "Suç ve Ceza", "10.04.2026", "24.04.2026", "Süresi Geçti (Cezalı)"});
-        model.addRow(new Object[]{"TRX-103", "Data Structures", "05.05.2026", "-", "Okunuyor"});
+        
+        refreshHistory();
 
         add(new JScrollPane(table_readlist), BorderLayout.CENTER);
+    }
+
+    public void refreshHistory() {
+        DefaultTableModel model = (DefaultTableModel) table_readlist.getModel();
+        model.setRowCount(0);
+        
+        // Senin yazdığın geçmişi getirme metodunu aktif ID ile çağırıyoruz
+        List<String[]> gecmis = DatabaseManager.kullaniciGecmisiniGetir(DatabaseManager.aktifKullaniciId);
+        
+        for (String[] satir : gecmis) {
+            model.addRow(satir);
+        }
     }
 }
