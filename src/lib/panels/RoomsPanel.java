@@ -40,24 +40,29 @@ public class RoomsPanel extends JPanel {
         add(roomButtons, BorderLayout.SOUTH);
 
         // Tablo Kurulumu
-        String[] roomColumns = {"ID", "Oda Numarası", "Kapasite", "Durum"};
+        String[] roomColumns = {"ID", "Oda İsmi/No", "Kapasite", "Durum", "Kalan Süre"};
         table_rooms = UIHelper.createReadOnlyTable(roomColumns);
         
-        refreshTable();
-
+        // Tabloyu ekranda göster
         add(new JScrollPane(table_rooms), BorderLayout.CENTER);
+        
+        // Tabloyu veritabanındaki verilerle doldur
+        refreshTable();
     }
 
     public void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) table_rooms.getModel();
         model.setRowCount(0);
         List<String[]> odalar = DatabaseManager.tumMateryalleriGetir("Oda");
+        
         for (String[] oda : odalar) {
-            model.addRow(new Object[]{oda[0], oda[1], oda[3], oda[4]});
+            String kapasite = (oda[3] != null && oda[3].endsWith("Kişi")) ? oda[3] : oda[3] + " Kişi";
+            
+            // 5. sütun olan "Kalan Süre" için "-" eklendi
+            model.addRow(new Object[]{oda[0], oda[1], kapasite, oda[4], "-"});
         }
     }
 
-    // Admin panelinin bu tabloya erişmesi için gerekli Getter
     public JTable getRoomsTable() {
         return table_rooms;
     }

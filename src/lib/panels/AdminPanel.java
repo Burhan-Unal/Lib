@@ -42,11 +42,10 @@ public class AdminPanel extends JPanel {
         //Tab çağrıları
         createBookManagementTab();
         createRoomManagementTab();
-        createUserManagementTab();
         setupTabChangeListener();
     }
 
-    // Kitap Yönetimi
+    //Kitap Yönetimi
     private void createBookManagementTab() {
         JPanel tabBookMgmt = new JPanel(new BorderLayout());
         tabBookMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
@@ -82,12 +81,20 @@ public class AdminPanel extends JPanel {
         adminTabs.addTab("Kitap Yönetimi", tabBookMgmt);
 
         btnAddBook.addActionListener(e -> {
-            if (txtAddName.getText().isEmpty() || txtAddAuthor.getText().isEmpty() || txtAddCategory.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Lütfen tüm alanları doldurun!");
+            if (txtAddName.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Lütfen kitap adını doldurun!");
             } else {
                 if (DatabaseManager.materyalEkle("Kitap", txtAddName.getText(), txtAddAuthor.getText(), txtAddCategory.getText())) {
                     JOptionPane.showMessageDialog(this, "Kitap eklendi!");
                     txtAddName.setText(""); txtAddAuthor.setText(""); txtAddCategory.setText("");
+                    
+                    //Tablo güncelleme
+                    DefaultTableModel model = (DefaultTableModel) booksTable.getModel();
+                    model.setRowCount(0); 
+                    
+                    for (String[] satir : DatabaseManager.tumMateryalleriGetir("Kitap")) {
+                        model.addRow(satir);
+                    }
                 }
             }
         });
@@ -128,14 +135,26 @@ public class AdminPanel extends JPanel {
 
         tabRoomMgmt.add(roomForm, BorderLayout.NORTH);
         adminTabs.addTab("Oda Yönetimi", tabRoomMgmt);
-
+        
         btnAddRoom.addActionListener(e -> {
-            if (txtRoomName.getText().isEmpty() || txtCapacity.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Lütfen tüm alanları doldurun!");
+            if (txtRoomName.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Lütfen oda numarasını doldurun!");
             } else {
-                if (DatabaseManager.materyalEkle("Oda", txtRoomName.getText(), "-", txtCapacity.getText())) {
+                String kapasiteMetni = txtCapacity.getText();
+                if (!kapasiteMetni.endsWith("Kişi")) {
+                    kapasiteMetni += " Kişi";
+                }
+                
+                if (DatabaseManager.materyalEkle("Oda", txtRoomName.getText(), "-", kapasiteMetni)) {
                     JOptionPane.showMessageDialog(this, "Oda eklendi.");
                     txtRoomName.setText(""); txtCapacity.setText("");
+                    
+                    //Tablo güncelleme
+                    DefaultTableModel model = (DefaultTableModel) roomsTable.getModel();
+                    model.setRowCount(0); 
+                    for (String[] dbSatir : DatabaseManager.tumMateryalleriGetir("Oda")) {
+                        model.addRow(new Object[]{ dbSatir[0], dbSatir[1], dbSatir[3], dbSatir[4], "-" });
+                    }
                 }
             }
         });
@@ -153,58 +172,16 @@ public class AdminPanel extends JPanel {
         });
     }
 
-    // Kullanıcı Yönetimi (Sadeleştirildi)
-    private void createUserManagementTab() {
-        JPanel tabUserMgmt = new JPanel(new BorderLayout());
-        tabUserMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
-        
-        // Puan düşürme butonu kalktığı için düzeni 4 satıra indirdik
-        JPanel userActionPanel = new JPanel(new GridLayout(4, 1, 15, 15)); 
-        userActionPanel.setBorder(new EmptyBorder(50, 200, 150, 200)); 
-        userActionPanel.setBackground(UIHelper.COLOR_BACKGROUND);
-
-        JTextField txtTargetUserId = createTextField();
-        
-        JButton btnBan = UIHelper.createColoredButton("Sistemden KALICI OLARAK BANLA", UIHelper.COLOR_DANGER, Color.WHITE, UIHelper.FONT_BOLD);
-        makeButtonFlat(btnBan);
-
-        userActionPanel.add(UIHelper.createLabel("İşlem Yapılacak Öğrenci Numarası:", UIHelper.FONT_NORMAL, SwingConstants.CENTER));
-        userActionPanel.add(txtTargetUserId);
-        userActionPanel.add(new JLabel("")); // Görsel olarak arayı açmak için boş etiket
-        userActionPanel.add(btnBan);
-
-        tabUserMgmt.add(userActionPanel, BorderLayout.CENTER);
-        adminTabs.addTab("Kullanıcı Yönetimi", tabUserMgmt);
-
-        btnBan.addActionListener(e -> {
-            String ogrNo = txtTargetUserId.getText().trim();
-            if(!ogrNo.isEmpty()) {
-                int userId = DatabaseManager.kullaniciGirisYap(ogrNo);
-                
-                if(userId != -1) {
-                    int confirm = JOptionPane.showConfirmDialog(this, ogrNo + " numaralı öğrenciyi BANLAMAK istediğinize emin misiniz?", "Kalıcı Ban Onayı", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-                    if(confirm == JOptionPane.YES_OPTION) {
-                        if(DatabaseManager.kullaniciBanla(userId)) {
-                            JOptionPane.showMessageDialog(this, ogrNo + " numaralı öğrenci sistemden kalıcı olarak BANLANDI.", "İşlem Tamamlandı", JOptionPane.INFORMATION_MESSAGE);
-                            txtTargetUserId.setText("");
-                        }
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Hata: Sisteme kayıtlı böyle bir öğrenci numarası yok!", "Hata", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Lütfen bir Öğrenci Numarası girin!");
-            }
-        });
-    }
-
-    // Tab değiştirme
+    //Tab değiştirme 
     private void setupTabChangeListener() {
         adminTabs.addChangeListener(e -> {
             int selectedIndex = adminTabs.getSelectedIndex();
-            btnExportCSV.setVisible(selectedIndex == 0 || selectedIndex == 1);
-            if (selectedIndex == 0) btnExportCSV.setText("Kitap Envanterini CSV Olarak İndir");
-            else if (selectedIndex == 1) btnExportCSV.setText("Oda Envanterini CSV Olarak İndir");
+            btnExportCSV.setVisible(true); 
+            if (selectedIndex == 0) {
+                btnExportCSV.setText("Kitap Envanterini CSV Olarak İndir");
+            } else if (selectedIndex == 1) {
+                btnExportCSV.setText("Oda Envanterini CSV Olarak İndir");
+            }
         });
 
         btnExportCSV.addActionListener(e -> {
