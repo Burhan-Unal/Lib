@@ -81,10 +81,10 @@ public class DatabaseManager {
             return false;
         }
     }
-
+    
     public static boolean rezervasyonYap(int kullaniciId, int materyalId) {
         String kontrolSorgu = "SELECT durum FROM Materyal WHERE id = ?";
-        String materyalGuncelle = "UPDATE Materyal SET durum = 'Reserved' WHERE id = ?";
+        String materyalGuncelle = "UPDATE Materyal SET durum = 'Rezerve Edildi' WHERE id = ?";
         String rezervasyonEkle = "INSERT INTO Rezervasyon (kullanici_id, materyal_id) VALUES (?, ?)";
 
         Connection conn = connect();
@@ -97,7 +97,7 @@ public class DatabaseManager {
 
             if (rs.next()) {
                 String durum = rs.getString("durum");
-                if (!durum.equals("Available")) {
+                if (!durum.equals("Müsait")) {
                     conn.rollback();
                     return false;
                 }
@@ -151,7 +151,7 @@ public class DatabaseManager {
 
     public static boolean rezervasyonIptalEtVeCezaVer(int kullaniciId, int materyalId, boolean cezaUygula) {
         String silSorgu = "DELETE FROM Rezervasyon WHERE kullanici_id = ? AND materyal_id = ?";
-        String materyalSerbest = "UPDATE Materyal SET durum = 'Available' WHERE id = ?";
+        String materyalSerbest = "UPDATE Materyal SET durum = 'Müsait' WHERE id = ?";
         String cezaSorgu = "UPDATE Kullanici SET guven_puani = guven_puani - 10 WHERE id = ?";
 
         Connection conn = connect();
@@ -315,6 +315,19 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return 100;
+    }
+    
+
+    public static boolean kullaniciBanla(int kullaniciId) {
+        String sql = "DELETE FROM Kullanici WHERE id = ?";
+        try (Connection conn = connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, kullaniciId);
+            int etkilenenSatir = pstmt.executeUpdate();
+            return etkilenenSatir > 0;
+        } catch (SQLException e) {
+            System.out.println("Banlama hatası: " + e.getMessage());
+            return false;
+        }
     }
 
     public static void main(String[] args) {

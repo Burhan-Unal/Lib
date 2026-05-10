@@ -18,7 +18,7 @@ public class AdminPanel extends JPanel {
         this.roomsTable = roomsTable;
 
         setLayout(new BorderLayout(0, 0));
-        setBackground(UIHelper.COLOR_BACKGROUND); // Ana arka planı modern renge sabitledik
+        setBackground(UIHelper.COLOR_BACKGROUND); 
 
         JLabel lblAdminTitle = UIHelper.createLabel("Yönetici Kontrol Paneli", UIHelper.FONT_TITLE, SwingConstants.CENTER);
         lblAdminTitle.setBorder(new EmptyBorder(20, 0, 20, 0));
@@ -34,7 +34,7 @@ public class AdminPanel extends JPanel {
         adminReportPanel.setBorder(new EmptyBorder(20, 0, 20, 0));
         
         btnExportCSV = UIHelper.createColoredButton("Kitap Envanterini CSV Olarak İndir", UIHelper.COLOR_SUCCESS, Color.WHITE, UIHelper.FONT_BOLD);
-        makeButtonFlat(btnExportCSV); // İşletim sistemi teması çakışmasını çözer
+        makeButtonFlat(btnExportCSV); 
         
         adminReportPanel.add(btnExportCSV);
         add(adminReportPanel, BorderLayout.SOUTH);
@@ -46,7 +46,7 @@ public class AdminPanel extends JPanel {
         setupTabChangeListener();
     }
 
-    //Kitap Yönetimi
+    // Kitap Yönetimi
     private void createBookManagementTab() {
         JPanel tabBookMgmt = new JPanel(new BorderLayout());
         tabBookMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
@@ -128,7 +128,7 @@ public class AdminPanel extends JPanel {
 
         tabRoomMgmt.add(roomForm, BorderLayout.NORTH);
         adminTabs.addTab("Oda Yönetimi", tabRoomMgmt);
-        
+
         btnAddRoom.addActionListener(e -> {
             if (txtRoomName.getText().isEmpty() || txtCapacity.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Lütfen tüm alanları doldurun!");
@@ -153,35 +153,52 @@ public class AdminPanel extends JPanel {
         });
     }
 
-    //Kullanıcı Yönetimi
+    // Kullanıcı Yönetimi (Sadeleştirildi)
     private void createUserManagementTab() {
         JPanel tabUserMgmt = new JPanel(new BorderLayout());
         tabUserMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
         
-        JPanel userActionPanel = new JPanel(new GridLayout(6, 1, 15, 15)); 
-        userActionPanel.setBorder(new EmptyBorder(30, 200, 30, 200));
+        // Puan düşürme butonu kalktığı için düzeni 4 satıra indirdik
+        JPanel userActionPanel = new JPanel(new GridLayout(4, 1, 15, 15)); 
+        userActionPanel.setBorder(new EmptyBorder(50, 200, 150, 200)); 
         userActionPanel.setBackground(UIHelper.COLOR_BACKGROUND);
 
         JTextField txtTargetUserId = createTextField();
         
-        JButton btnPunish = UIHelper.createColoredButton("Güven Puanını 10 Puan DÜŞÜR", UIHelper.COLOR_WARNING, Color.WHITE, UIHelper.FONT_BOLD);
-        makeButtonFlat(btnPunish);
-        
         JButton btnBan = UIHelper.createColoredButton("Sistemden KALICI OLARAK BANLA", UIHelper.COLOR_DANGER, Color.WHITE, UIHelper.FONT_BOLD);
         makeButtonFlat(btnBan);
 
-        userActionPanel.add(UIHelper.createLabel("İşlem Yapılacak Kullanıcı ID:", UIHelper.FONT_NORMAL, SwingConstants.CENTER));
+        userActionPanel.add(UIHelper.createLabel("İşlem Yapılacak Öğrenci Numarası:", UIHelper.FONT_NORMAL, SwingConstants.CENTER));
         userActionPanel.add(txtTargetUserId);
-        userActionPanel.add(btnPunish);
+        userActionPanel.add(new JLabel("")); // Görsel olarak arayı açmak için boş etiket
         userActionPanel.add(btnBan);
 
         tabUserMgmt.add(userActionPanel, BorderLayout.CENTER);
         adminTabs.addTab("Kullanıcı Yönetimi", tabUserMgmt);
 
-        btnPunish.addActionListener(e -> JOptionPane.showMessageDialog(this, txtTargetUserId.getText() + " ID'li kullanıcının puanı düşürüldü."));
+        btnBan.addActionListener(e -> {
+            String ogrNo = txtTargetUserId.getText().trim();
+            if(!ogrNo.isEmpty()) {
+                int userId = DatabaseManager.kullaniciGirisYap(ogrNo);
+                
+                if(userId != -1) {
+                    int confirm = JOptionPane.showConfirmDialog(this, ogrNo + " numaralı öğrenciyi BANLAMAK istediğinize emin misiniz?", "Kalıcı Ban Onayı", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                    if(confirm == JOptionPane.YES_OPTION) {
+                        if(DatabaseManager.kullaniciBanla(userId)) {
+                            JOptionPane.showMessageDialog(this, ogrNo + " numaralı öğrenci sistemden kalıcı olarak BANLANDI.", "İşlem Tamamlandı", JOptionPane.INFORMATION_MESSAGE);
+                            txtTargetUserId.setText("");
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Hata: Sisteme kayıtlı böyle bir öğrenci numarası yok!", "Hata", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Lütfen bir Öğrenci Numarası girin!");
+            }
+        });
     }
 
-    //Tab değiştirme
+    // Tab değiştirme
     private void setupTabChangeListener() {
         adminTabs.addChangeListener(e -> {
             int selectedIndex = adminTabs.getSelectedIndex();
@@ -208,7 +225,7 @@ public class AdminPanel extends JPanel {
     }
 
     private void makeButtonFlat(JButton btn) {
-        btn.setOpaque(true); // İçini verilen renkle tam doldur
-        btn.setBorderPainted(false); // İşletim sisteminin native kenarlığını çizme
+        btn.setOpaque(true); 
+        btn.setBorderPainted(false); 
     }
 }
