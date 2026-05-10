@@ -18,18 +18,24 @@ public class AdminPanel extends JPanel {
         this.roomsTable = roomsTable;
 
         setLayout(new BorderLayout(0, 0));
+        setBackground(UIHelper.COLOR_BACKGROUND); // Ana arka planı modern renge sabitledik
 
-        JLabel lblAdminTitle = UIHelper.createLabel("Yönetici Kontrol Paneli", UIHelper.FONT_BOLD, SwingConstants.CENTER);
+        JLabel lblAdminTitle = UIHelper.createLabel("Yönetici Kontrol Paneli", UIHelper.FONT_TITLE, SwingConstants.CENTER);
         lblAdminTitle.setBorder(new EmptyBorder(20, 0, 20, 0));
         add(lblAdminTitle, BorderLayout.NORTH);
 
         adminTabs = new JTabbedPane(JTabbedPane.TOP);
-        adminTabs.setFont(new Font("Tahoma", Font.BOLD, 18));
+        adminTabs.setFont(UIHelper.FONT_BOLD);
+        adminTabs.setBackground(Color.WHITE);
         add(adminTabs, BorderLayout.CENTER);
 
         JPanel adminReportPanel = new JPanel();
+        adminReportPanel.setBackground(UIHelper.COLOR_BACKGROUND);
         adminReportPanel.setBorder(new EmptyBorder(20, 0, 20, 0));
-        btnExportCSV = UIHelper.createColoredButton("Kitap Envanterini CSV Olarak İndir", null, new Color(0, 100, 0), new Font("Tahoma", Font.BOLD, 16));
+        
+        btnExportCSV = UIHelper.createColoredButton("Kitap Envanterini CSV Olarak İndir", UIHelper.COLOR_SUCCESS, Color.WHITE, UIHelper.FONT_BOLD);
+        makeButtonFlat(btnExportCSV); // İşletim sistemi teması çakışmasını çözer
+        
         adminReportPanel.add(btnExportCSV);
         add(adminReportPanel, BorderLayout.SOUTH);
 
@@ -40,26 +46,41 @@ public class AdminPanel extends JPanel {
         setupTabChangeListener();
     }
 
-    // 1. KİTAP YÖNETİMİ METODU
+ // 1. KİTAP YÖNETİMİ METODU
     private void createBookManagementTab() {
         JPanel tabBookMgmt = new JPanel(new BorderLayout());
-        JPanel formPanel = new JPanel(new GridLayout(5, 2, 20, 20));
-        formPanel.setBorder(new EmptyBorder(50, 200, 300, 200));
+        tabBookMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
+        
+        // Boşlukları 15'e düşürüp, EmptyBorder'ı Oda Yönetimi ile aynı ferahlığa getirdik
+        JPanel formPanel = new JPanel(new GridLayout(5, 2, 15, 15));
+        formPanel.setBorder(new EmptyBorder(30, 100, 30, 100));
+        formPanel.setBackground(UIHelper.COLOR_BACKGROUND);
 
-        JTextField txtAddName = new JTextField();
-        JTextField txtAddAuthor = new JTextField();
-        JTextField txtAddCategory = new JTextField();
+        JTextField txtAddName = createTextField();
+        JTextField txtAddAuthor = createTextField();
+        JTextField txtAddCategory = createTextField();
+        
         JButton btnAddBook = UIHelper.createButton("Kataloğa Ekle");
-        btnAddBook.setFont(new Font("Tahoma", Font.BOLD, 18));
+        btnAddBook.setFont(UIHelper.FONT_BOLD);
+        makeButtonFlat(btnAddBook);
 
-        formPanel.add(new JLabel("Kitap Adı:"));      formPanel.add(txtAddName);
-        formPanel.add(new JLabel("Yazar:"));          formPanel.add(txtAddAuthor);
-        formPanel.add(new JLabel("Kategori:"));       formPanel.add(txtAddCategory);
-        formPanel.add(new JLabel(""));                formPanel.add(btnAddBook);
-        tabBookMgmt.add(formPanel, BorderLayout.CENTER);
+        formPanel.add(UIHelper.createLabel("Kitap Adı:", UIHelper.FONT_NORMAL, SwingConstants.LEFT));      formPanel.add(txtAddName);
+        formPanel.add(UIHelper.createLabel("Yazar:", UIHelper.FONT_NORMAL, SwingConstants.LEFT));          formPanel.add(txtAddAuthor);
+        formPanel.add(UIHelper.createLabel("Kategori:", UIHelper.FONT_NORMAL, SwingConstants.LEFT));       formPanel.add(txtAddCategory);
+        formPanel.add(new JLabel(""));                                                                     formPanel.add(btnAddBook);
+        
+        // CENTER yerine NORTH'a ekledik ki kendi doğal boyutunda kalsın, sıkışmasın
+        tabBookMgmt.add(formPanel, BorderLayout.NORTH);
 
-        JButton btnDeleteBook = UIHelper.createColoredButton("Tablodan Seçili Kitabı SİL", new Color(255, 102, 102), null, new Font("Tahoma", Font.BOLD, 18));
-        tabBookMgmt.add(btnDeleteBook, BorderLayout.SOUTH);
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(UIHelper.COLOR_BACKGROUND);
+        bottomPanel.setBorder(new EmptyBorder(0, 0, 20, 0)); // Silme butonunun altına biraz boşluk ekledik
+        
+        JButton btnDeleteBook = UIHelper.createColoredButton("Tablodan Seçili Kitabı SİL", UIHelper.COLOR_DANGER, Color.WHITE, UIHelper.FONT_BOLD);
+        makeButtonFlat(btnDeleteBook);
+        
+        bottomPanel.add(btnDeleteBook);
+        tabBookMgmt.add(bottomPanel, BorderLayout.SOUTH);
         adminTabs.addTab("Kitap Yönetimi", tabBookMgmt);
 
         btnAddBook.addActionListener(e -> {
@@ -89,17 +110,23 @@ public class AdminPanel extends JPanel {
     // 2. ODA YÖNETİMİ METODU
     private void createRoomManagementTab() {
         JPanel tabRoomMgmt = new JPanel(new BorderLayout());
+        tabRoomMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
+        
         JPanel roomForm = new JPanel(new GridLayout(3, 2, 10, 10));
         roomForm.setBorder(new EmptyBorder(30, 100, 30, 100));
+        roomForm.setBackground(UIHelper.COLOR_BACKGROUND);
 
-        JTextField txtRoomName = new JTextField();
-        JTextField txtCapacity = new JTextField();
+        JTextField txtRoomName = createTextField();
+        JTextField txtCapacity = createTextField();
+        
         JButton btnAddRoom = UIHelper.createButton("Oda Ekle");
+        makeButtonFlat(btnAddRoom);
         JButton btnDeleteRoom = UIHelper.createButton("Seçili Odayı Sil");
+        makeButtonFlat(btnDeleteRoom);
 
-        roomForm.add(new JLabel("Oda İsmi/No:"));     roomForm.add(txtRoomName);
-        roomForm.add(new JLabel("Kapasite:"));       roomForm.add(txtCapacity);
-        roomForm.add(btnAddRoom);                      roomForm.add(btnDeleteRoom);
+        roomForm.add(UIHelper.createLabel("Oda İsmi/No:", UIHelper.FONT_NORMAL, SwingConstants.LEFT));     roomForm.add(txtRoomName);
+        roomForm.add(UIHelper.createLabel("Kapasite:", UIHelper.FONT_NORMAL, SwingConstants.LEFT));        roomForm.add(txtCapacity);
+        roomForm.add(btnAddRoom);                                                                          roomForm.add(btnDeleteRoom);
 
         tabRoomMgmt.add(roomForm, BorderLayout.NORTH);
         adminTabs.addTab("Oda Yönetimi", tabRoomMgmt);
@@ -124,17 +151,24 @@ public class AdminPanel extends JPanel {
         });
     }
 
-    // 3. KULLANICI YÖNETİMİ METODU (İŞTE EKSİK OLAN BUYDU KUZEN)
+    // 3. KULLANICI YÖNETİMİ METODU
     private void createUserManagementTab() {
         JPanel tabUserMgmt = new JPanel(new BorderLayout());
+        tabUserMgmt.setBackground(UIHelper.COLOR_BACKGROUND);
+        
         JPanel userActionPanel = new JPanel(new GridLayout(6, 1, 15, 15)); 
         userActionPanel.setBorder(new EmptyBorder(30, 200, 30, 200));
+        userActionPanel.setBackground(UIHelper.COLOR_BACKGROUND);
 
-        JTextField txtTargetUserId = new JTextField();
-        JButton btnPunish = UIHelper.createColoredButton("Güven Puanını 10 Puan DÜŞÜR", new Color(255, 153, 51), null, new Font("Tahoma", Font.BOLD, 16));
-        JButton btnBan = UIHelper.createColoredButton("Sistemden KALICI OLARAK BANLA", new Color(220, 53, 69), Color.WHITE, new Font("Tahoma", Font.BOLD, 16));
+        JTextField txtTargetUserId = createTextField();
+        
+        JButton btnPunish = UIHelper.createColoredButton("Güven Puanını 10 Puan DÜŞÜR", UIHelper.COLOR_WARNING, Color.WHITE, UIHelper.FONT_BOLD);
+        makeButtonFlat(btnPunish);
+        
+        JButton btnBan = UIHelper.createColoredButton("Sistemden KALICI OLARAK BANLA", UIHelper.COLOR_DANGER, Color.WHITE, UIHelper.FONT_BOLD);
+        makeButtonFlat(btnBan);
 
-        userActionPanel.add(new JLabel("İşlem Yapılacak Kullanıcı ID:", SwingConstants.CENTER));
+        userActionPanel.add(UIHelper.createLabel("İşlem Yapılacak Kullanıcı ID:", UIHelper.FONT_NORMAL, SwingConstants.CENTER));
         userActionPanel.add(txtTargetUserId);
         userActionPanel.add(btnPunish);
         userActionPanel.add(btnBan);
@@ -145,7 +179,7 @@ public class AdminPanel extends JPanel {
         btnPunish.addActionListener(e -> JOptionPane.showMessageDialog(this, txtTargetUserId.getText() + " ID'li kullanıcının puanı düşürüldü."));
     }
 
-    // 4. TAB CHANGE LISTENER METODU (BU DA EKSİK OLABİLİR)
+    // 4. TAB CHANGE LISTENER METODU
     private void setupTabChangeListener() {
         adminTabs.addChangeListener(e -> {
             int selectedIndex = adminTabs.getSelectedIndex();
@@ -160,5 +194,22 @@ public class AdminPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "CSV Raporu Hazırlanıyor...");
             }
         });
+    }
+
+    // --- YARDIMCI METOTLAR (TASARIM ÇAKIŞMASINI ÇÖZENLER) ---
+    
+    // Metin kutularının (JTextField) düzgün ve modern görünmesi için
+    private JTextField createTextField() {
+        JTextField tf = new JTextField();
+        tf.setFont(UIHelper.FONT_NORMAL);
+        tf.setForeground(UIHelper.COLOR_TEXT);
+        tf.setBackground(Color.WHITE);
+        return tf;
+    }
+
+    // Native buton sorununu çözen sihirli metod
+    private void makeButtonFlat(JButton btn) {
+        btn.setOpaque(true); // İçini bizim verdiğimiz renkle tam doldur
+        btn.setBorderPainted(false); // İşletim sisteminin native kenarlığını çizme
     }
 }

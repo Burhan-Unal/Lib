@@ -1,6 +1,6 @@
 package lib;
 
-import lib.panels.*; // Yeni oluşturduğumuz modülleri içe aktarıyoruz
+import lib.panels.*; // Panel modülleri içe aktarma
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,8 +13,13 @@ public class LibDashboard extends JFrame {
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
+                //İşletim sisteminin modern temasını (Look and Feel) uygular
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                
+                // Beep sesini susturma 
                 UIManager.put("AuditoryCues.playList", UIManager.get("AuditoryCues.noAuditoryCues"));
-                LibDashboard frame = new LibDashboard(true); // Geliştirme aşamasında admin olarak başlatıyoruz
+                
+                LibDashboard frame = new LibDashboard(true);
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -56,7 +61,7 @@ public class LibDashboard extends JFrame {
         DashboardCard = new JPanel(new CardLayout());
         contentPane.add(DashboardCard, BorderLayout.CENTER);
         
-        // 1. Modüler Panelleri Örnekliyoruz
+        // 1. Modüler Paneller
         BooksPanel booksPanel = new BooksPanel(isAdmin);
         RoomsPanel roomsPanel = new RoomsPanel(isAdmin);
         ReadlistPanel readlistPanel = new ReadlistPanel();
@@ -75,7 +80,6 @@ public class LibDashboard extends JFrame {
         }
 
         // --- BUTON TIKLAMA OLAYLARI (ROUTING) ---
-        // Bütün menü butonlarının yönlendirme işlemleri burada tanımlandı
         
         if (isAdmin && btnAdmin != null) {
             btnAdmin.addActionListener(e -> UIHelper.switchPanel(DashboardCard, "ADMIN"));

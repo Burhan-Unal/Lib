@@ -14,6 +14,8 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+
 import java.awt.Font;
 
 public class LoginFrame extends JFrame {
@@ -35,8 +37,13 @@ public class LoginFrame extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    DatabaseManager.initializeDatabase();
+                    // 1. İşletim sisteminin modern görünümünü uygula
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                     
+                    // 2. Java Swing'in arka plandaki uyarı seslerini (Beep) sustur
+                    UIManager.put("AuditoryCues.playList", UIManager.get("AuditoryCues.noAuditoryCues"));
+                    
+                    // 3. Login ekranını oluştur ve görünür yap
                     LoginFrame frame = new LoginFrame();
                     frame.setVisible(true);
                 } catch (Exception e) {
